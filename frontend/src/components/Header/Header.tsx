@@ -1,11 +1,13 @@
 import { Menu, Dropdown, Avatar, Space, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { UserOutlined, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons'
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons'
 
 import { env } from '@/env'
 import useUserFromToken from '@/hooks/useUserFromToken'
 
 import * as S from './Header.style'
+import { AiOutlineMenu } from 'react-icons/ai'
+import { IoIosArrowBack } from 'react-icons/io'
 
 interface HeaderProps {onClickCollapse: () => void, isCollapsable: boolean}
 
@@ -33,7 +35,7 @@ export function Header({onClickCollapse, isCollapsable}: HeaderProps) {
     <S.Container>
       <Button
             type="text"
-            icon={isCollapsable ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            icon={isCollapsable ? <AiOutlineMenu /> : <IoIosArrowBack />}
             onClick={onClickCollapse}
             style={{
               fontSize: '16px',
