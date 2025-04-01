@@ -16,7 +16,7 @@ export function Header({onClickCollapse, isCollapsable}: HeaderProps) {
   const username = useUserFromToken()
 
   const handleLogout = () => {
-    localStorage.removeItem(env.VITE_SESSION_KEY)
+    localStorage.removeItem(env.VITE_SESSION_KEY || 't')
     navigate('/')
   }
 
