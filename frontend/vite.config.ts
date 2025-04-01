@@ -17,6 +17,7 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts'],
     environment: 'happy-dom',
   },
+  base: 'erp-mvp'
 } as UserConfig & {
   test: InlineConfig
 })
