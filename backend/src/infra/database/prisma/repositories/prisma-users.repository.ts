@@ -13,12 +13,11 @@ export class PrismaUserRepository implements UserRepository {
 
   async findMany(
     { page, limit }: PaginationParams,
-    filters?: { subscriberId: string; search?: string },
+    filters?: { search?: string },
   ): Promise<{ users: User[]; total: number }> {
-    const { subscriberId, search } = filters || {}
+    const { search } = filters || {}
 
     const whereConditions: Prisma.UserWhereInput = {
-      subscriberId,
       ...(search && {
         OR: [
           { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
@@ -60,6 +59,20 @@ export class PrismaUserRepository implements UserRepository {
     const user = await this.prisma.user.findUnique({
       where: {
         email,
+      },
+    })
+
+    if (!user) {
+      return null
+    }
+
+    return PrismaUserTransformer.toDomain(user)
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        username,
       },
     })
 

@@ -7,17 +7,16 @@ import {
   BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   HttpCode,
   Post,
   UnauthorizedException,
 } from '@nestjs/common'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
-import { SubscriberDisabledError } from '@/domain/account/application/use-cases/errors/subscriber-disabled-error'
 
 const authenticateBodySchema = z.object({
-  email: z.string().email(),
+  username: z.string(),
+  password: z.string(),
 })
 
 const bodyValidationPipe = new ZodValidationPipe(authenticateBodySchema)
@@ -32,10 +31,11 @@ export class AuthenticateController {
   @Post()
   @HttpCode(204)
   async handle(@Body(bodyValidationPipe) body: AuthenticateBodySchema) {
-    const { email } = body
+    const { username, password } = body
 
     const result = await this.authenticate.execute({
-      email,
+      username,
+      password,
     })
 
     if (result.isLeft()) {
@@ -44,8 +44,6 @@ export class AuthenticateController {
       switch (error.constructor) {
         case WrongCredentialsError:
           throw new UnauthorizedException(error.message)
-        case SubscriberDisabledError:
-          throw new ForbiddenException(error.message)
         default:
           throw new BadRequestException()
       }

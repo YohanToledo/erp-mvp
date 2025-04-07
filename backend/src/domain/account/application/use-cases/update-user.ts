@@ -33,7 +33,7 @@ export class UpdateUserUseCase {
       return left(new ResourceNotFoundError())
     }
 
-    user.update({ name, email, status })
+    user.update({ name, email })
 
     await this.userRepository.save(user)
 

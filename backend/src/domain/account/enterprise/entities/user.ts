@@ -2,17 +2,16 @@ import { Entity } from '@/core/entities/entity'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 
 export interface UserProps {
-  subscriberId: string
   name: string
-  email: string
-  status: string
+  username: string
+  email: string | null
+  password: string
+  active: boolean
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export class User extends Entity<UserProps> {
-  get subscriberId() {
-    return this.props.subscriberId
-  }
-
   get name() {
     return this.props.name
   }
@@ -21,25 +20,48 @@ export class User extends Entity<UserProps> {
     this.props.name = name
   }
 
+  get username() {
+    return this.props.username
+  }
+
+  set username(username: string) {
+    this.props.username = username
+  }
+
   get email() {
     return this.props.email
   }
 
-  set email(email: string) {
+  set email(email: string | null) {
     this.props.email = email
   }
 
-  get status() {
-    return this.props.status
+  get password() {
+    return this.props.password
   }
 
-  set status(status: string) {
-    this.props.status = status
+  set password(password: string) {
+    this.props.password = password
+  }
+
+  get active() {
+    return this.props.active
+  }
+
+  set active(active: boolean) {
+    this.props.active = active
+  }
+
+  get createdAt() {
+    return this.props.createdAt
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt
   }
 
   static create(props: UserProps, id?: UniqueEntityID) {
-    const user = new User(props, id)
-    return user
+    return new User(props, id)
   }
 
   update(props: Partial<UserProps>): void {

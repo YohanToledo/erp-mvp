@@ -10,8 +10,10 @@ import { UserPresenter } from '../../presenters/user.presenter'
 
 const createAccountBodySchema = z.object({
   name: z.string(),
-  email: z.string().email(),
-  status: z.enum(['ACTIVED', 'DISABLED']),
+  username: z.string(),
+  password: z.string().min(6),
+  email: z.string().email().optional(),
+  active: z.boolean().optional(),
 })
 
 const bodyValidationPipe = new ZodValidationPipe(createAccountBodySchema)
@@ -20,7 +22,7 @@ type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
 
 @Controller('users')
 export class CreateUserController {
-  constructor(private userCustomer: CreateUserUseCase) {}
+  constructor(private createUser: CreateUserUseCase) {}
 
   @Post()
   @HttpCode(201)
@@ -28,13 +30,14 @@ export class CreateUserController {
     @Body(bodyValidationPipe) body: CreateAccountBodySchema,
     @CurrentUser() user: UserPayload,
   ) {
-    const { name, email, status } = body
+    const { name, username, password, email, active } = body
 
-    const result = await this.userCustomer.execute({
-      subscriberId: user.subscriber,
+    const result = await this.createUser.execute({
       name,
+      username,
+      password,
       email,
-      status,
+      active,
     })
 
     if (result.isLeft()) {

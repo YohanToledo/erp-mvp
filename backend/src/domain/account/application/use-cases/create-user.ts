@@ -6,10 +6,11 @@ import { UserRepository } from '../repositories/user.repository'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 interface CreateUserUseCaseRequest {
-  subscriberId: string
   name: string
-  email: string
-  status: string
+  username: string
+  password: string
+  email?: string
+  active?: boolean
 }
 
 type CreateUserUseCaseResponse = Either<UserAlreadyExistsError, { user: User }>
@@ -21,25 +22,24 @@ export class CreateUserUseCase {
   async execute(
     request: CreateUserUseCaseRequest,
   ): Promise<CreateUserUseCaseResponse> {
-    const { subscriberId, name, email, status } = request
+    const { name, username, email, password, active = true } = request
 
-    const userWithSameEmail = await this.userRepository.findByEmail(email)
+    const userWithSameUsername = await this.userRepository.findByUsername(username)
 
-    if (userWithSameEmail) {
-      return left(new UserAlreadyExistsError(email))
+    if (userWithSameUsername) {
+      return left(new UserAlreadyExistsError(username))
     }
 
     const user = User.create({
-      subscriberId,
       name,
-      email,
-      status,
+      username,
+      email: email || null,
+      password,
+      active,
     })
 
     await this.userRepository.create(user)
 
-    return right({
-      user,
-    })
+    return right({ user })
   }
 }

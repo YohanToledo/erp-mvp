@@ -6,9 +6,9 @@ import { UserPayload } from '@/infra/auth/authentication/jwt.strategy'
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
+import { PaginationQueryParamsSchema } from '../../validators/pagination-query.validator'
 import { ContentWithPaginationPresenter } from '../../presenters/content-whith-pagination.presenter'
 import { UserPresenter } from '../../presenters/user.presenter'
-import { PaginationQueryParamsSchema } from '../../validators/pagination-query.validator'
 
 const UserQueryParamsSchema = PaginationQueryParamsSchema.extend({
   search: z.string().optional(),
@@ -27,14 +27,12 @@ export class FetchUsersController {
     @CurrentUser() user: UserPayload,
     @Query(queryValidationPipe) query: UserQueryParams,
   ) {
-    const subscriberId = user.subscriber
     const { page, limit, search } = query
 
     const result = await this.fetchUsers.execute({
       page,
       limit,
       filters: {
-        subscriberId,
         search,
       },
     })

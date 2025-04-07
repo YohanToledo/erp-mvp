@@ -1,6 +1,5 @@
 import { FetchUserUseCase } from '@/domain/account/application/use-cases/fetch-user'
 import { BadRequestException, Controller, Get, Param } from '@nestjs/common'
-
 import { UserPresenter } from '../../presenters/user.presenter'
 
 @Controller('/users/:id')

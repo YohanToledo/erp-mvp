@@ -8,7 +8,6 @@ interface FetchUsersUseCaseRequest {
   page: number
   limit: number
   filters: {
-    subscriberId: string
     search?: string
   }
 }

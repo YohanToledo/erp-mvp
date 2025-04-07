@@ -6,10 +6,13 @@ export class PrismaUserTransformer {
   static toDomain(raw: PrismaUser): User {
     return User.create(
       {
-        subscriberId: raw.subscriberId,
+        username: raw.username,
+        password: raw.password,
         name: raw.name,
         email: raw.email,
-        status: raw.status,
+        active: raw.active,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
       },
       new UniqueEntityID(raw.id),
     )
@@ -18,10 +21,11 @@ export class PrismaUserTransformer {
   static toPrisma(user: User): Prisma.UserUncheckedCreateInput {
     return {
       id: user.id.toString(),
-      subscriberId: user.subscriberId,
+      username: user.username,
+      password: user.password,
       name: user.name,
       email: user.email,
-      status: user.status,
+      active: user.active,
     }
   }
 
@@ -35,9 +39,11 @@ export class PrismaUserTransformer {
         id: user.id.toString(),
       },
       data: {
+        username: user.username,
         name: user.name,
         email: user.email,
-        status: user.status,
+        active: user.active,
+        password: user.password,
       },
     }
   }
