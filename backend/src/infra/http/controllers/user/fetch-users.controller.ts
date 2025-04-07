@@ -9,6 +9,7 @@ import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 import { PaginationQueryParamsSchema } from '../../validators/pagination-query.validator'
 import { ContentWithPaginationPresenter } from '../../presenters/content-whith-pagination.presenter'
 import { UserPresenter } from '../../presenters/user.presenter'
+import { Public } from '@/infra/auth/authentication/public'
 
 const UserQueryParamsSchema = PaginationQueryParamsSchema.extend({
   search: z.string().optional(),
@@ -18,6 +19,7 @@ type UserQueryParams = z.infer<typeof UserQueryParamsSchema>
 
 const queryValidationPipe = new ZodValidationPipe(UserQueryParamsSchema)
 
+@Public()
 @Controller('/users')
 export class FetchUsersController {
   constructor(private fetchUsers: FetchUsersUseCase) { }
