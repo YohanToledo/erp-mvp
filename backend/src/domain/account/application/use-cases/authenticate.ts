@@ -1,10 +1,9 @@
 import { Either, left, right } from '@/core/either'
 import { JwtEncrypter } from '@/infra/cryptography/jwt-encrypter'
-import { EnvService } from '@/infra/env/env.service'
-import { MailService } from '@/infra/mail/mail.service'
 import { Injectable } from '@nestjs/common'
 import { WrongCredentialsError } from './errors/wrong-credentials-error'
 import { UserRepository } from '../repositories/user.repository'
+import { hash } from 'bcrypt'
 
 interface AuthenticateUserUseCaseRequest {
   username: string,
@@ -27,8 +26,9 @@ export class AuthenticateUseCase {
 
     const user = await this.userRepository.findByUsername(username)
 
-    //todo: add password hashing
-    if (!user || !user.active || user.password !== password) {
+    const hashPass = await hash(password, 10)
+
+    if (!user || !user.active || user.password !== hashPass) {
       return left(new WrongCredentialsError())
     }
 

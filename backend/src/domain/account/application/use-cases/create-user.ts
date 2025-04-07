@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { User } from '../../enterprise/entities/user'
 import { UserRepository } from '../repositories/user.repository'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
+import { hash } from 'bcrypt'
 
 interface CreateUserUseCaseRequest {
   name: string
@@ -30,11 +31,13 @@ export class CreateUserUseCase {
       return left(new UserAlreadyExistsError(username))
     }
 
+    const hashedPassword = await hash(password, 10)
+
     const user = User.create({
       name,
       username,
       email: email || null,
-      password,
+      password: hashedPassword,
       active,
     })
 
