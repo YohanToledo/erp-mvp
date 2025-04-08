@@ -7,11 +7,12 @@ import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 
 import { ZodValidationPipe } from '../../pipes/zod-validation-pipe'
 import { UserPresenter } from '../../presenters/user.presenter'
+import { Public } from '@/infra/auth/authentication/public'
 
 const createAccountBodySchema = z.object({
   name: z.string(),
   username: z.string(),
-  password: z.string().min(6),
+  password: z.string().min(5),
   email: z.string().email().optional(),
   active: z.boolean().optional(),
 })
@@ -21,6 +22,7 @@ const bodyValidationPipe = new ZodValidationPipe(createAccountBodySchema)
 type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
 
 @Controller('users')
+@Public()
 export class CreateUserController {
   constructor(private createUser: CreateUserUseCase) {}
 

@@ -18,10 +18,10 @@ import { JwtStrategy } from './authentication/jwt.strategy'
       async useFactory(env: EnvService) {
         const privateKey = env.get('JWT_PRIVATE_KEY')
         const publicKey = env.get('JWT_PUBLIC_KEY')
-        const expiresIn = env.get('JWT_EXPIRES_IN')
+        //const expiresIn = env.get('JWT_EXPIRES_IN')
 
         return {
-          signOptions: { algorithm: 'RS256', expiresIn },
+          signOptions: { algorithm: 'RS256' },
           privateKey: Buffer.from(privateKey, 'base64'),
           publicKey: Buffer.from(publicKey, 'base64'),
         }

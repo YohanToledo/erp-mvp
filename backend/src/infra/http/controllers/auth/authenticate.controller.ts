@@ -29,7 +29,7 @@ export class AuthenticateController {
   constructor(private authenticate: AuthenticateUseCase) {}
 
   @Post()
-  @HttpCode(204)
+  @HttpCode(200)
   async handle(@Body(bodyValidationPipe) body: AuthenticateBodySchema) {
     const { username, password } = body
 
@@ -48,5 +48,7 @@ export class AuthenticateController {
           throw new BadRequestException()
       }
     }
+
+    return result.value
   }
 }

@@ -3,7 +3,7 @@ import { JwtEncrypter } from '@/infra/cryptography/jwt-encrypter'
 import { Injectable } from '@nestjs/common'
 import { WrongCredentialsError } from './errors/wrong-credentials-error'
 import { UserRepository } from '../repositories/user.repository'
-import { hash } from 'bcrypt'
+import { compare } from 'bcrypt'
 
 interface AuthenticateUserUseCaseRequest {
   username: string,
@@ -17,7 +17,7 @@ export class AuthenticateUseCase {
   constructor(
     private userRepository: UserRepository,
     private readonly jwtEncrypter: JwtEncrypter,
-  ) {}
+  ) { }
 
   async execute(
     request: AuthenticateUserUseCaseRequest,
@@ -26,20 +26,24 @@ export class AuthenticateUseCase {
 
     const user = await this.userRepository.findByUsername(username)
 
-    const hashPass = await hash(password, 10)
+    if (!user) {
+      return left(new WrongCredentialsError())
+    }
 
-    if (!user || !user.active || user.password !== hashPass) {
+    const isPasswordValid = await compare(password, user.password)
+
+    if (!user.active || !isPasswordValid) {
       return left(new WrongCredentialsError())
     }
 
     const accessToken = await this.jwtEncrypter.encrypt({
-      sub: user.id,
+      sub: user.id.toString(),
       name: user.name,
       email: user.email,
       username: user.username,
       active: user.active,
     })
 
-    return right({accessToken})
+    return right({ accessToken })
   }
 }

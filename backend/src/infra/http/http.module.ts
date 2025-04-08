@@ -19,6 +19,8 @@ import { MailModule } from '../mail/mail.module'
 import { CryptographyModule } from '../cryptography/cryptography.module'
 import { DatabaseModule } from '../database/database.module'
 import { MessagingModule } from '../messaging/messaging.module'
+import { AuthenticateController } from './controllers/auth/authenticate.controller'
+import { ValidateTokenController } from './controllers/auth/validate-token.controller'
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { MessagingModule } from '../messaging/messaging.module'
     UpdateUserController,
     DeleteUserController,
     UpdateUserController,
+    AuthenticateController,
+    ValidateTokenController,
   ],
   providers: [
     AuthenticateUseCase,
