@@ -22,7 +22,6 @@ const bodyValidationPipe = new ZodValidationPipe(createAccountBodySchema)
 type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
 
 @Controller('users')
-@Public()
 export class CreateUserController {
   constructor(private createUser: CreateUserUseCase) {}
 

@@ -15,7 +15,8 @@
     "dev:electron": "yarn workspace electron start",
     "dev": "concurrently \"yarn dev:backend\" \"yarn dev:frontend\" \"yarn dev:electron\"",
     "build:frontend": "yarn workspace frontend build",
-    "build:backend": "yarn workspace backend build"
+    "build:backend": "yarn workspace backend build",
+    "prisma:generate": "npx prisma generate --schema=backend/prisma/schema.prisma"
   },
   "devDependencies": {
     "concurrently": "^8.0.1"
