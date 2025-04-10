@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client'
 
 import { PrismaService } from '../prisma.service'
 import { ProductRepository } from '@/domain/product/application/repositories/product.repository'
-import { Product } from '@/domain/product/enterprise/product'
+import { Product, ProductStatus } from '@/domain/product/enterprise/entities/product'
 import { PrismaProductTransformer } from '../transformers/prisma-product.transformer'
 
 @Injectable()
@@ -13,7 +13,7 @@ export class PrismaProductRepository implements ProductRepository {
 
   async findMany(
     { page, limit }: PaginationParams,
-    filters?: { search?: string, status?: string },
+    filters?: { search?: string, status?: ProductStatus },
   ): Promise<{ products: Product[]; total: number }> {
     const { search, status } = filters || {}
 

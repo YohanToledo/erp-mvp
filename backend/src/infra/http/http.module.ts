@@ -21,6 +21,8 @@ import { DatabaseModule } from '../database/database.module'
 import { MessagingModule } from '../messaging/messaging.module'
 import { AuthenticateController } from './controllers/auth/authenticate.controller'
 import { ValidateTokenController } from './controllers/auth/validate-token.controller'
+import { CreateProductController } from './controllers/product/create-product.controller'
+import { CreateProductUseCase } from '@/domain/product/application/use-cases/create-product'
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { ValidateTokenController } from './controllers/auth/validate-token.contr
     UpdateUserController,
     AuthenticateController,
     ValidateTokenController,
+    CreateProductController,
   ],
   providers: [
     AuthenticateUseCase,
@@ -53,6 +56,7 @@ import { ValidateTokenController } from './controllers/auth/validate-token.contr
     CreateUserUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
+    CreateProductUseCase,
   ],
 })
 export class HttpModule {}

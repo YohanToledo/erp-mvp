@@ -1,5 +1,5 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import { Product } from '@/domain/product/enterprise/product'
+import { Product } from '@/domain/product/enterprise/entities/product'
 import { Prisma, Product as PrismaProduct } from '@prisma/client'
 
 export class PrismaProductTransformer {

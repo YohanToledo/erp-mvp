@@ -1,5 +1,6 @@
 import { Entity } from '@/core/entities/entity'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { ProductCategory } from '@prisma/client'
 
 export type ProductStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED'
 
@@ -10,8 +11,9 @@ export interface ProductProps {
     unitCost: number
     salePrice: number
     profitMargin: number
-    status: string
+    status: ProductStatus
     categoryId: string
+    category?: ProductCategory
     stock: number
     minStockLevel: number
     createdAt?: Date
@@ -67,7 +69,7 @@ export class Product extends Entity<ProductProps> {
         return this.props.status
     }
 
-    set status(status: string) {
+    set status(status: ProductStatus) {
         this.props.status = status
     }
 
@@ -77,6 +79,14 @@ export class Product extends Entity<ProductProps> {
 
     set categoryId(categoryId: string) {
         this.props.categoryId = categoryId
+    }
+
+    get category(): ProductCategory | undefined {
+        return this.props.category
+    }
+
+    set category(category: ProductCategory) {
+        this.props.category = category
     }
 
     get stock() {

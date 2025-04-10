@@ -1,10 +1,10 @@
 import { PaginationParams } from '@/core/repositories/pagination-params'
-import { Product } from '../../enterprise/product';
+import { Product, ProductStatus } from '../../enterprise/entities/product';
 
 export abstract class ProductRepository {
   abstract findMany(
     params: PaginationParams,
-    filters?: { search?: string },
+    filters?: { search?: string, status?: ProductStatus },
   ): Promise<{ products: Product[]; total: number }>
 
   abstract findById(id: string): Promise<Product | null>

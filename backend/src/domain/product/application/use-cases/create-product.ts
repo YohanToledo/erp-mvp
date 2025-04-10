@@ -1,8 +1,10 @@
 import { Either, left, right } from '@/core/either'
 import { Injectable } from '@nestjs/common'
 import { ProductRepository } from '../repositories/product.repository'
-import { Product, ProductStatus } from '../../enterprise/product'
+import { Product, ProductStatus } from '../../enterprise/entities/product'
 import { ProductConflictError } from './errors/product-conflict.error'
+import { ProductCategoryRepository } from '../repositories/product-category.repository'
+import { CategoryNotFoundError } from './errors/category-not-found.error'
 
 interface CreateProductUseCaseRequest {
   name: string
@@ -16,18 +18,22 @@ interface CreateProductUseCaseRequest {
   minStockLevel?: number
 }
 
-type CreateProductUseCaseResponse = Either<ProductConflictError, { product: Product }>
+type CreateProductUseCaseResponse = Either<ProductConflictError | CategoryNotFoundError, { product: Product }>
 
 @Injectable()
 export class CreateProductUseCase {
-  constructor(private productRepository: ProductRepository) { }
+  constructor(
+    private productRepository: ProductRepository,
+    private categoryRepository: ProductCategoryRepository
+  ) { }
 
   async execute(
     request: CreateProductUseCaseRequest,
   ): Promise<CreateProductUseCaseResponse> {
     const { name, description, unitCost, salePrice, profitMargin, status, categoryId, stock, minStockLevel } = request
 
-    //TODO: find category by id and check if it exists
+    const category = await this.categoryRepository.findById(categoryId)
+    if(!category) return left(new CategoryNotFoundError(categoryId))
 
     const product = Product.create({
       name,
