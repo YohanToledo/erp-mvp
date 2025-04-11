@@ -1,3 +1,8 @@
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "erd.png"
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,7 +21,6 @@ model User {
   active    Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  Sale      Sale[]
 
   @@map("users")
 }
@@ -35,26 +39,11 @@ model Product {
   minStockLevel Int           @default(0)
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
-  Sale          Sale[]
 
-  category ProductCategory @relation("CategoryProducts", fields: [categoryId], references: [id])
+  category  ProductCategory @relation("CategoryProducts", fields: [categoryId], references: [id])
+  saleItems SaleItem[]
 
   @@map("products")
-}
-
-model Sale {
-  id        String   @id @default(uuid())
-  userId    String
-  productId String
-  quantity  Int
-  total     Float
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@map("sales")
 }
 
 model ProductCategory {
@@ -70,6 +59,56 @@ model ProductCategory {
   @@map("product_categories")
 }
 
+model Customer {
+  id    Int     @unique @default(autoincrement())
+  name  String
+  phone String?
+  email String? @unique
+
+  sales Sale[]
+}
+
+model Sale {
+  id            String         @id @default(uuid())
+  customerId    Int?
+  customer      Customer?      @relation(fields: [customerId], references: [id])
+  status        SaleStatus     @default(PAID)
+  totalAmount   Decimal
+  paymentMethod PaymentMethod? // preenchido só após o pagamento
+  paidAt        DateTime? // preenchido quando for quitado
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  payments  Payment[] // pagamentos relacionados (se for parcelado, por exemplo)
+  saleItems SaleItem[]
+}
+
+model Payment {
+  id     String        @id @default(uuid())
+  saleId String
+  sale   Sale          @relation(fields: [saleId], references: [id])
+  amount Decimal
+  method PaymentMethod
+  paidAt DateTime      @default(now())
+}
+
+model SaleItem {
+  id        String @id @default(uuid())
+  saleId    String
+  productId String
+
+  quantity   Int
+  unitPrice  Float
+  totalPrice Float
+
+  sale    Sale    @relation(fields: [saleId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([saleId, productId]) // Evita duplicidade do mesmo produto na mesma venda
+}
+
+
+// ENUMS
 enum ProductStatus {
   ACTIVE   @map("ACTIVE")
   INACTIVE @map("INACTIVE")
@@ -80,4 +119,17 @@ enum ProductCategoryStatus {
   ACTIVE   @map("ACTIVE")
   INACTIVE @map("INACTIVE")
   DELETED  @map("DELETED")
+}
+
+enum SaleStatus {
+  PENDING  @map("PENDING")
+  PAID     @map("PAID")
+  CANCELED @map("CANCELED")
+}
+
+enum PaymentMethod {
+  CASH        @map("CASH")
+  CREDIT_CARD @map("CREDIT_CARD")
+  DEBIT_CARD  @map("DEBIT_CARD")
+  PIX         @map("PIX")
 }
